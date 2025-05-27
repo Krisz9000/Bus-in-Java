@@ -1,10 +1,10 @@
 package org.example;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Collections;
 
 public class Deck {
-    private final ArrayList<Card> cardsInDeck = new ArrayList<>();
+    private ArrayList<Card> cardsInDeck = new ArrayList<>();
 
     public Deck() {
         for (Value v : Value.values()) {
@@ -15,10 +15,11 @@ public class Deck {
     }
 
     public Card drawCard() {
-        Random random = new Random();
-        int drawnCardIndex = random.nextInt(0, cardsInDeck.size());
-        Card drawnCard = cardsInDeck.get(drawnCardIndex);
-        cardsInDeck.remove(drawnCardIndex);
+        Card drawnCard = cardsInDeck.get(0);
+        cardsInDeck.remove(0);
+        if (cardsInDeck.isEmpty()) {
+            cardsInDeck = new Deck().cardsInDeck;
+        }
         return drawnCard;
     }
 
@@ -26,4 +27,13 @@ public class Deck {
         cardsInDeck.forEach((c) -> System.out.println(c.toString()));
     }
 
+    public Deck reshuffle() {
+        Deck newDeck = new Deck();
+        newDeck.shuffle();
+        return newDeck;
+    }
+
+    public void shuffle() {
+        Collections.shuffle(cardsInDeck);
+    }
 }
