@@ -17,10 +17,11 @@ public class GameLogic {
                 The rules are as follows:
                 
                 You will choose how many decks of cards you will play with.
-                You will draw cards from this deck while you try to answer 4 questions.
+                You will draw cards from this deck while you try to guess
+                the answer to 4 questions.
                 You will need to consider your previous cards when guessing.
                 If you fail any question, you have to start again from
-                the first question, until you get all 4 of them right in a row.
+                the first question, until you get all 4 of them right.
                 If the deck runs out of cards, it gets reshuffled.
                 
                 Good luck, and have fun!
