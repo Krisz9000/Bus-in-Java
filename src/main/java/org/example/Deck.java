@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Deck {
-    private ArrayList<Card> cardsInDeck = new ArrayList<>();
+    private final ArrayList<Card> cardsInDeck = new ArrayList<>();
+    private ArrayList<Card> cardsLeftInDeck;
 
     public Deck() {
         for (Value v : Value.values()) {
@@ -12,28 +13,65 @@ public class Deck {
                 this.cardsInDeck.add(new Card(s, v));
             }
         }
+        this.cardsLeftInDeck = this.cardsInDeck;
     }
 
+    /**
+     * @return All the {@code Cards} the {@code Deck} should have when full
+     */
+    public ArrayList<Card> getCardsInDeck() {
+        return cardsInDeck;
+    }
+
+    /**
+     * @return All the {@code Cards} that are still left in the {@code Deck}
+     */
+    public ArrayList<Card> getCardsLeftInDeck() {
+        return cardsLeftInDeck;
+    }
+
+    /**
+     * Takes the first (uppermost) card from the deck, then removes it from the deck
+     *
+     * @return A {@code Card} object, retrieved from the list of cards in the deck
+     */
     public Card drawCard() {
-        Card drawnCard = cardsInDeck.get(0);
-        cardsInDeck.remove(0);
-        if (cardsInDeck.isEmpty()) {
-            cardsInDeck = new Deck().cardsInDeck;
+        Card drawnCard = cardsLeftInDeck.get(0);
+        cardsLeftInDeck.remove(0);
+        if (cardsLeftInDeck.isEmpty()) {
+            System.out.println("NOTE: The deck has been reshuffled because it was empty.");
+            this.reshuffle();
         }
         return drawnCard;
     }
 
+    /**
+     * Debug function, prints out the list of cards in the deck
+     */
     public void printDeck() {
         cardsInDeck.forEach((c) -> System.out.println(c.toString()));
     }
 
-    public Deck reshuffle() {
-        Deck newDeck = new Deck();
-        newDeck.shuffle();
-        return newDeck;
+    /**
+     * Puts all the {@code Cards} back into the Deck and shuffles it
+     */
+    public void reshuffle() {
+        cardsLeftInDeck = cardsInDeck;
+        Collections.shuffle(cardsLeftInDeck);
     }
 
+    /**
+     * Shuffles all the {@code Cards} in the {@code Deck}, that are still left in
+     * it using {@code Collections.shuffle()}
+     */
     public void shuffle() {
-        Collections.shuffle(cardsInDeck);
+        Collections.shuffle(cardsLeftInDeck);
+    }
+
+    /**
+     * Empties the {@code Deck} using {@code ArrayList<>.clear()}
+     */
+    public void clearDeck() {
+        cardsInDeck.clear();
     }
 }

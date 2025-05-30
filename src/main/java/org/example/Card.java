@@ -19,13 +19,6 @@ public class Card {
         this.value = value;
     }
 
-    //TODO maybe use the other constructor in this
-    public Card(Deck deck) {
-        Card newCard = deck.drawCard();
-        this.suit = newCard.getSuit();
-        this.value = newCard.getValue();
-    }
-
     @Override
     public String toString() {
         return this.getValue().name() + " of " + this.getSuit().name();
