@@ -36,8 +36,8 @@ public class Deck {
      * @return A {@code Card} object, retrieved from the list of cards in the deck
      */
     public Card drawCard() {
-        Card drawnCard = cardsLeftInDeck.get(0);
-        cardsLeftInDeck.remove(0);
+        Card drawnCard = cardsLeftInDeck.getFirst();
+        cardsLeftInDeck.removeFirst();
         if (cardsLeftInDeck.isEmpty()) {
             System.out.println("NOTE: The deck has been reshuffled because it was empty.");
             this.reshuffle();

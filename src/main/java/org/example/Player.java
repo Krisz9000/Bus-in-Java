@@ -42,6 +42,10 @@ public class Player {
         return sb.toString();
     }
 
+    public int getID() {
+        return ID;
+    }
+
     /**
      * Empties the player's hand using {@code ArrayList<>.clear()}
      */

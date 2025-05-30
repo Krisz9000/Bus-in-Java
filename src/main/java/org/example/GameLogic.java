@@ -58,7 +58,7 @@ public class GameLogic {
         String firstGuess = firstGuess();
         //firstGuess() only returns acceptable answers, so if it`s not r or red, than it must be b or black
         if (firstGuess.equalsIgnoreCase("r") || firstGuess.equalsIgnoreCase("red")) {
-            if (p.getDrawnCards().get(0).getSuit() == Suits.HEARTS || p.getDrawnCards().get(0).getSuit() == Suits.DIAMONDS) {
+            if (p.getDrawnCards().getFirst().getSuit() == Suits.HEARTS || p.getDrawnCards().getFirst().getSuit() == Suits.DIAMONDS) {
                 System.out.println("""
                         ---------------------------------------------
                         Congratulations!
@@ -69,13 +69,13 @@ public class GameLogic {
                 System.out.println("""
                                            ---------------------------------------------
                                            Unfortunately, you guessed wrong.
-                                           The drawn card is a(n)\s""" + p.getDrawnCards().get(0).toString() +
+                                           The drawn card is a(n)\s""" + p.getDrawnCards().getFirst().toString() +
                                    "\nYou have to start again from the first question.");
                 p.clearHand();
                 return startQuestions(p, playingDeck);
             }
         } else {
-            if (p.getDrawnCards().get(0).getSuit() == Suits.CLUBS || p.getDrawnCards().get(0).getSuit() == Suits.SPADES) {
+            if (p.getDrawnCards().getFirst().getSuit() == Suits.CLUBS || p.getDrawnCards().getFirst().getSuit() == Suits.SPADES) {
                 System.out.println("""
                         ---------------------------------------------
                         Congratulations!
@@ -85,7 +85,7 @@ public class GameLogic {
             } else {
                 System.out.println("""
                                            Unfortunately, you guessed wrong.
-                                           The drawn card is a(n)\s""" + p.getDrawnCards().get(0).toString() +
+                                           The drawn card is a(n)\s""" + p.getDrawnCards().getFirst().toString() +
                                    "\nYou have to start again from the first question.");
                 p.clearHand();
                 return startQuestions(p, playingDeck);
@@ -367,7 +367,7 @@ public class GameLogic {
         Scanner scanner = new Scanner(System.in);
         String s;
         try {
-            s = scanner.next();
+            s = scanner.next().toString();
         } catch (InputMismatchException e) {
             System.out.println("Invalid input, please enter a String:");
             s = readString();
