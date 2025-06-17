@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -59,12 +60,16 @@ public class MainFX extends Application {
 
         VBox vBoxBottom = new VBox(5);
         vBoxBottom.setAlignment(Pos.TOP_LEFT);
+
+        HBox hBoxButtons = new HBox(5);
+        hBoxButtons.setAlignment(Pos.CENTER);
         //Welcome text
         Text title = new Text(30, 80, "Ride the Bus: Welcome!");
         title.setFont(new Font(26));
 
         //Labels
         Label cardLabel = new Label("Press \"Start new Game\" to draw the first card!");
+        cardLabel.setFont(new Font(16));
         Label remainingCardsLabel = new Label("Remaining cards in the Deck: 0");
         remainingCardsLabel.setMaxWidth(350);
         remainingCardsLabel.setAlignment(Pos.BASELINE_LEFT);
@@ -79,6 +84,7 @@ public class MainFX extends Application {
             numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
         });
         nextCardBtn.setDisable(true);
+        nextCardBtn.setPrefWidth(120);
 
         //Creating the start new game button
         Button startBtn = new Button("Start new Game");
@@ -92,10 +98,13 @@ public class MainFX extends Application {
             nextCardBtn.setDisable(false);
         });
         startBtn.setDefaultButton(true);
-        startBtn.setPrefSize(150, 50);
+        startBtn.setPrefWidth(120);
+
+        //Adding everything to the HBoxes
+        hBoxButtons.getChildren().addAll(startBtn, nextCardBtn);
 
         //Adding everything to the VBoxes
-        vBoxCenter.getChildren().addAll(title, startBtn, nextCardBtn, cardLabel);
+        vBoxCenter.getChildren().addAll(title, hBoxButtons, cardLabel);
         vBoxBottom.getChildren().addAll(numberOfDrawsLabel, remainingCardsLabel);
 
         // Setting up Menu Bar and root of the Scene
