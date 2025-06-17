@@ -56,6 +56,7 @@ public class GameLogic {
         numberOfDraws++;
         String firstGuess = firstGuess();
         //firstGuess() only returns acceptable answers, so if it`s not r or red, than it must be b or black
+        assert firstGuess != null;
         if (firstGuess.equalsIgnoreCase("r") || firstGuess.equalsIgnoreCase("red")) {
             if (p.getDrawnCards().getFirst().getSuit() == Suits.HEARTS || p.getDrawnCards().getFirst().getSuit() == Suits.DIAMONDS) {
                 System.out.println("""
@@ -207,6 +208,7 @@ public class GameLogic {
         //Take the value of cards based on their index in the enum list of Value
         int valueOfFirstCard = Arrays.stream(Value.values()).toList().indexOf(p.getDrawnCards().get(0).getValue());
         int valueOfSecondCard = Arrays.stream(Value.values()).toList().indexOf(p.getDrawnCards().get(1).getValue());
+        assert secondGuess != null;
         if (secondGuess.equalsIgnoreCase("h") || secondGuess.equalsIgnoreCase("higher")) {
             if (valueOfFirstCard < valueOfSecondCard) {
                 System.out.println("""
@@ -261,6 +263,7 @@ public class GameLogic {
         int valueOfFirstCard = Arrays.stream(Value.values()).toList().indexOf(p.getDrawnCards().get(0).getValue());
         int valueOfSecondCard = Arrays.stream(Value.values()).toList().indexOf(p.getDrawnCards().get(1).getValue());
         int valueOfThirdCard = Arrays.stream(Value.values()).toList().indexOf(p.getDrawnCards().get(2).getValue());
+        assert thirdGuess != null;
         if (thirdGuess.equalsIgnoreCase("i") || thirdGuess.equalsIgnoreCase("inside")) {
             //Drawn card's value must be somewhere between the two, this checks for both "ways" the cards could be
             if ((valueOfFirstCard < valueOfThirdCard && valueOfSecondCard > valueOfThirdCard) ||
@@ -313,6 +316,7 @@ public class GameLogic {
         }
         p.drawCard(playingDeck);
         numberOfDraws++;
+        assert fourthGuess != null;
         if (fourthGuess.equalsIgnoreCase("n") || fourthGuess.equalsIgnoreCase("no")) {
             if (suitsInHand.contains(p.getDrawnCards().get(3).getSuit())) {
                 System.out.println("""
