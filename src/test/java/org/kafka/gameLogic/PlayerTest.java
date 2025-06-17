@@ -15,7 +15,7 @@ public class PlayerTest {
     @Test
     public void testClearHand() {
         Deck deck = new Deck();
-        Player player = new Player(1, deck.getCardsInDeck());
+        Player player = new Player(1, deck.getCardsPartOfDeck());
         assertFalse(player.getDrawnCards().isEmpty());
         player.clearHand();
         assertTrue(player.getDrawnCards().isEmpty());

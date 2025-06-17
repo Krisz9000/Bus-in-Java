@@ -7,8 +7,9 @@ import java.util.Scanner;
 
 public class GameLogic {
     private static int numberOfDraws;
+    private static ArrayList<Player> players;
     /**
-     * The main game logic. It sets up the Player, introduces the rule, and starts the questions.
+     * The main game logic. It sets up the Player, introduces the rules, and starts the questions.
      */
     public static boolean startGame() {
         Player p1 = new Player(1);
@@ -28,7 +29,7 @@ public class GameLogic {
                 Please enter how many decks of cards you would like to play with:
                 """);
         Deck playingDeck = setUpPlayingDeck(readInt());
-        //startQuestion only finishes execution, when game has ended
+        //startQuestion only finishes execution when the game has ended
         if (startQuestions(p1, playingDeck)) {
             System.out.println("""
                     ---------------------------------------------
@@ -40,7 +41,6 @@ public class GameLogic {
             return true;
         } else return false;
     }
-
     /**
      * The main method that goes through the four questions.
      * If the player fails one of the questions, it loops back to the beginning of this one,
@@ -55,7 +55,8 @@ public class GameLogic {
         p.drawCard(playingDeck);
         numberOfDraws++;
         String firstGuess = firstGuess();
-        //firstGuess() only returns acceptable answers, so if it`s not r or red, than it must be b or black
+        //firstGuess() only returns acceptable answers, so if it's not r or red, than it must be b or black
+        assert firstGuess != null;
         if (firstGuess.equalsIgnoreCase("r") || firstGuess.equalsIgnoreCase("red")) {
             if (p.getDrawnCards().getFirst().getSuit() == Suits.HEARTS || p.getDrawnCards().getFirst().getSuit() == Suits.DIAMONDS) {
                 System.out.println("""
@@ -92,7 +93,6 @@ public class GameLogic {
             }
         }
     }
-
     /**
      * Handles the first question and makes sure only an accepted answer will be passed on
      *
@@ -112,7 +112,6 @@ public class GameLogic {
         } else return firstGuess;
         return null;
     }
-
     /**
      * Handles the second question and makes sure only an accepted answer will be passed on
      *
@@ -136,7 +135,6 @@ public class GameLogic {
         } else return secondGuess;
         return null;
     }
-
     /**
      * Handles the player's input for the third question.
      * Keeps recursively looping until acceptable answer is given.
@@ -164,7 +162,6 @@ public class GameLogic {
         } else return thirdGuess;
         return null;
     }
-
     /**
      * Handles the player's input for the fourth question.
      * Keeps recursively looping until acceptable answer is given.
@@ -191,7 +188,6 @@ public class GameLogic {
         } else return fourthGuess;
         return null;
     }
-
     /**
      * Manages the answer to the second question. If the player succeeds, it sends them to the third question.
      * If the player loses it, they start from the beginning.
@@ -207,6 +203,7 @@ public class GameLogic {
         //Take the value of cards based on their index in the enum list of Value
         int valueOfFirstCard = Arrays.stream(Value.values()).toList().indexOf(p.getDrawnCards().get(0).getValue());
         int valueOfSecondCard = Arrays.stream(Value.values()).toList().indexOf(p.getDrawnCards().get(1).getValue());
+        assert secondGuess != null;
         if (secondGuess.equalsIgnoreCase("h") || secondGuess.equalsIgnoreCase("higher")) {
             if (valueOfFirstCard < valueOfSecondCard) {
                 System.out.println("""
@@ -244,7 +241,6 @@ public class GameLogic {
             }
         }
     }
-
     /**
      * Manages the answer to the third question. If the player succeeds, it sends them to the fourth question.
      * If the player loses it, they start from the beginning.
@@ -261,6 +257,7 @@ public class GameLogic {
         int valueOfFirstCard = Arrays.stream(Value.values()).toList().indexOf(p.getDrawnCards().get(0).getValue());
         int valueOfSecondCard = Arrays.stream(Value.values()).toList().indexOf(p.getDrawnCards().get(1).getValue());
         int valueOfThirdCard = Arrays.stream(Value.values()).toList().indexOf(p.getDrawnCards().get(2).getValue());
+        assert thirdGuess != null;
         if (thirdGuess.equalsIgnoreCase("i") || thirdGuess.equalsIgnoreCase("inside")) {
             //Drawn card's value must be somewhere between the two, this checks for both "ways" the cards could be
             if ((valueOfFirstCard < valueOfThirdCard && valueOfSecondCard > valueOfThirdCard) ||
@@ -282,7 +279,7 @@ public class GameLogic {
                 return startQuestions(p, playingDeck);
             }
         } else {
-            //Drawn card' value must either be lower than both other cards, or higher to be outside the range
+            //Drawn card's value must either be lower than both other cards, or higher to be outside the range
             if ((valueOfFirstCard > valueOfThirdCard && valueOfSecondCard > valueOfThirdCard) ||
                 (valueOfFirstCard < valueOfThirdCard && valueOfSecondCard < valueOfThirdCard)) {
                 System.out.println("""
@@ -303,7 +300,6 @@ public class GameLogic {
             }
         }
     }
-
     private static boolean fourthQuestion(Player p, Deck playingDeck) {
         String fourthGuess = fourthGuess(p);
         //Array of only the suits of the player's cards
@@ -313,6 +309,7 @@ public class GameLogic {
         }
         p.drawCard(playingDeck);
         numberOfDraws++;
+        assert fourthGuess != null;
         if (fourthGuess.equalsIgnoreCase("n") || fourthGuess.equalsIgnoreCase("no")) {
             if (suitsInHand.contains(p.getDrawnCards().get(3).getSuit())) {
                 System.out.println("""
@@ -339,16 +336,15 @@ public class GameLogic {
             return startQuestions(p, playingDeck);
         }
     }
-
     /**
      * Sets up and shuffles the whole Deck the game shall be played with
      *
-     * @param numberOfDecks {@code Int}, the number of decks the Game shall be played with.
-     *                      Comes from the user through {@code readInt()}
+     * @param numberOfDecks {@code Int}, the number of decks the Game shall be played with.<br>
+     *                      Comes from the user through {@link GameLogic#readInt()}
      * @return A {@code Deck} object that consists of all the decks' cards shuffled together.
      */
-    private static Deck setUpPlayingDeck(int numberOfDecks) {
-        if (numberOfDecks <= 0) numberOfDecks++;
+    public static Deck setUpPlayingDeck(int numberOfDecks) {
+        if (numberOfDecks <= 0) numberOfDecks = 1;
 
         //Create as many decks as asked for
         ArrayList<Deck> decksInPlay = new ArrayList<>();
@@ -359,15 +355,17 @@ public class GameLogic {
         //Set up the final playing Deck
         Deck fullDeck = new Deck();
         fullDeck.clearDeck();
+        fullDeck.emptyDeck();
 
         //Shuffle the Decks in
         decksInPlay.forEach((d) -> {
-            for (Card c : d.getCardsInDeck()) fullDeck.getCardsInDeck().add(c);
+            for (Card c : d.getCardsPartOfDeck()) {
+                fullDeck.getCardsPartOfDeck().add(c);
+            }
         });
-        fullDeck.shuffle();
+        fullDeck.reshuffle();
         return fullDeck;
     }
-
     /**
      * Tries to read in input from console as an {@code int}, catches invalid inputs
      * and keeps looping until and {@code int} is received.
@@ -385,7 +383,6 @@ public class GameLogic {
         }
         return i;
     }
-
     /**
      * Tries to read in input from console as a {@code String}, catches invalid inputs
      * and keeps looping until a {@code String} is received.
