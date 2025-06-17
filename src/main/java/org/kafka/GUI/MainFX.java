@@ -17,6 +17,7 @@ public class MainFX extends Application {
 
     private final int DEBUG_CODE = 1;
     private Deck deck;
+    private int numberOfDraws = 0;
     
     public static void main(String[] args) {
         launch(args);
@@ -53,8 +54,11 @@ public class MainFX extends Application {
     @Override
     public void start(Stage primaryStage) {
         //Prepping VBox
-        VBox vBox = new VBox(20);
-        vBox.setAlignment(Pos.CENTER);
+        VBox vBoxCenter = new VBox(20);
+        vBoxCenter.setAlignment(Pos.CENTER);
+
+        VBox vBoxBottom = new VBox(5);
+        vBoxBottom.setAlignment(Pos.TOP_LEFT);
         //Welcome text
         Text title = new Text(30, 80, "Ride the Bus: Welcome!");
         title.setFont(new Font(26));
@@ -64,12 +68,15 @@ public class MainFX extends Application {
         Label remainingCardsLabel = new Label("Remaining cards in the Deck: 0");
         remainingCardsLabel.setMaxWidth(350);
         remainingCardsLabel.setAlignment(Pos.BASELINE_LEFT);
+        Label numberOfDrawsLabel = new Label("Number of draws: " + numberOfDraws);
+        numberOfDrawsLabel.setAlignment(Pos.BASELINE_LEFT);
 
         //Setting up button for next card draw
         Button nextCardBtn = new Button("Next Card");
         nextCardBtn.setOnAction(e -> {
             drawCard(cardLabel);
             remainingCardsLabel.setText("Remaining cards in the Deck: " + deck.getCardsLeftInDeck().size());
+            numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
         });
         nextCardBtn.setDisable(true);
 
@@ -80,20 +87,22 @@ public class MainFX extends Application {
             deck.shuffle();
             drawCard(cardLabel);
             remainingCardsLabel.setText("Remaining cards in the Deck: " + deck.getCardsLeftInDeck().size());
+            numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
             startBtn.setDefaultButton(false);
             nextCardBtn.setDisable(false);
         });
         startBtn.setDefaultButton(true);
         startBtn.setPrefSize(150, 50);
 
-        //Adding everything to the VBox
-        vBox.getChildren().addAll(title, startBtn, nextCardBtn, cardLabel);
+        //Adding everything to the VBoxes
+        vBoxCenter.getChildren().addAll(title, startBtn, nextCardBtn, cardLabel);
+        vBoxBottom.getChildren().addAll(numberOfDrawsLabel, remainingCardsLabel);
 
         // Setting up Menu Bar and root of the Scene
         BorderPane root = new BorderPane();
         root.setTop(setupMenuBar(primaryStage));
-        root.setCenter(vBox);
-        root.setBottom(remainingCardsLabel);
+        root.setCenter(vBoxCenter);
+        root.setBottom(vBoxBottom);
 
         //Setting up the Scene
         Scene scene = new Scene(root, 800, 600);
