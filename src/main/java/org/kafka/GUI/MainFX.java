@@ -24,6 +24,12 @@ public class MainFX extends Application {
         launch(args);
     }
 
+    /*Return a string in the form of "VALUE_OF_SUITS.png"
+    where VALUE and SUITS are from card.value and card.suit*/
+    private String filenameOfCard(Card card) {
+        return card.toString().replace(' ', '_').replace("of", "OF").concat(".png");
+    }
+
     //Setting up the Menu Bar on top
     private MenuBar setupMenuBar(Stage primaryStage) {
         MenuItem exitButton = new MenuItem("Exit Game");
