@@ -1,4 +1,4 @@
-package org.kafka;
+package org.kafka.gameLogic;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package org.kafka;
+package org.kafka.gameLogic;
 
 import java.util.ArrayList;
 import java.util.Collections;

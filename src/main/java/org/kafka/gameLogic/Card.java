@@ -1,4 +1,4 @@
-package org.kafka;
+package org.kafka.gameLogic;
 
 public class Card {
     //Attributes
