@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -13,6 +15,8 @@ import javafx.stage.Stage;
 import org.kafka.gameLogic.Card;
 import org.kafka.gameLogic.Deck;
 import org.kafka.gameLogic.GameLogic;
+
+import java.util.Objects;
 
 public class MainFX extends Application {
 
@@ -49,12 +53,13 @@ public class MainFX extends Application {
         return menuBar;
     }
 
-    private void drawCard(Label cardLabel) {
+    private void drawCard(Label cardLabel, ImageView cardImage) {
         if (deck == null) {
             cardLabel.setText("The Deck has not been initialized yet.");
         } else {
             Card card = deck.drawCard();
             cardLabel.setText("The drawn card is: " + card.toString());
+            cardImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/cards/" + filenameOfCard(card)))));
         }
     }
 
@@ -67,11 +72,20 @@ public class MainFX extends Application {
         VBox vBoxBottom = new VBox(5);
         vBoxBottom.setAlignment(Pos.TOP_LEFT);
 
+        //Prepping HBox
         HBox hBoxButtons = new HBox(5);
         hBoxButtons.setAlignment(Pos.CENTER);
+
         //Welcome text
         Text title = new Text(30, 80, "Ride the Bus: Welcome!");
         title.setFont(new Font(26));
+
+        //ImageView for card display
+        ImageView cardImageView = new ImageView();
+        cardImageView.setFitHeight(150);
+        cardImageView.setPreserveRatio(true);
+        cardImageView.setImage(null);
+        cardImageView.setDisable(true);
 
         //Labels
         Label cardLabel = new Label("Press \"Start new Game\" to draw the first card!");
@@ -85,7 +99,7 @@ public class MainFX extends Application {
         //Setting up button for next card draw
         Button nextCardBtn = new Button("Next Card");
         nextCardBtn.setOnAction(e -> {
-            drawCard(cardLabel);
+            drawCard(cardLabel, cardImageView);
             remainingCardsLabel.setText("Remaining cards in the Deck: " + deck.getCardsLeftInDeck().size());
             numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
         });
@@ -97,11 +111,13 @@ public class MainFX extends Application {
         startBtn.setOnAction(e -> {
             deck = new Deck();
             deck.shuffle();
-            drawCard(cardLabel);
+            drawCard(cardLabel, cardImageView);
             remainingCardsLabel.setText("Remaining cards in the Deck: " + deck.getCardsLeftInDeck().size());
             numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
             startBtn.setDefaultButton(false);
             nextCardBtn.setDisable(false);
+            cardImageView.setDisable(false);
+            if (!vBoxCenter.getChildren().contains(cardImageView)) vBoxCenter.getChildren().add(2, cardImageView);
         });
         startBtn.setDefaultButton(true);
         startBtn.setPrefWidth(120);
