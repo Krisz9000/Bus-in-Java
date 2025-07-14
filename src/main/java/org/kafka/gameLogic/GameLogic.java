@@ -343,7 +343,7 @@ public class GameLogic {
      *                      Comes from the user through {@link GameLogic#readInt()}
      * @return A {@code Deck} object that consists of all the decks' cards shuffled together.
      */
-    public static Deck setUpPlayingDeck(int numberOfDecks) {
+    private static Deck setUpPlayingDeck(int numberOfDecks) {
         if (numberOfDecks <= 0) numberOfDecks = 1;
 
         //Create as many decks as asked for

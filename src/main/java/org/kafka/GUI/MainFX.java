@@ -16,6 +16,7 @@ import org.kafka.gameLogic.Card;
 import org.kafka.gameLogic.Deck;
 import org.kafka.gameLogic.GameLogic;
 
+import java.security.InvalidParameterException;
 import java.util.Objects;
 
 public class MainFX extends Application {
@@ -28,13 +29,35 @@ public class MainFX extends Application {
         launch(args);
     }
 
-    /*Return a string in the form of "VALUE_OF_SUITS.png"
-    where VALUE and SUITS are from card.value and card.suit*/
+    /**
+     * Converts the name of a {@code card} into the filename-path of its image.
+     *
+     * @param card The {@link Card} which's name to convert.
+     * @return The corresponding filename of the {@code card's} image,
+     * to be used as a URL for an {@link ImageView} object.<br><br>
+     * Format: <br>
+     * "VALUE_OF_SUITS.png" where VALUE and SUITS are from {@link Card#getValue()} and {@link Card#getSuit()}.
+     */
     private String filenameOfCard(Card card) {
         return card.toString().replace(' ', '_').replace("of", "OF").concat(".png");
     }
 
-    //Setting up the Menu Bar on top
+
+    /**
+     * Fetches the image of a card by converting its attributes into a filename-path.
+     *
+     * @param card The {@link Card} of which to fetch its picture.
+     * @return New {@link Image} object, that is the picture of the requested {@code card}.
+     */
+    private Image fetchImageOfCard(Card card) {
+        return new Image(Objects.requireNonNull(getClass().getResourceAsStream("/cards/" + filenameOfCard(card))));
+    }
+
+    /**
+     * Sets up the entire menu bar for the application.
+     * @param primaryStage Current {@link Stage}, used by menu options.
+     * @return Prepared {@link MenuBar} to be added to scenes.
+     */
     private MenuBar setupMenuBar(Stage primaryStage) {
         MenuItem exitButton = new MenuItem("Exit Game");
         exitButton.setOnAction(e -> System.exit(0));
@@ -53,39 +76,92 @@ public class MainFX extends Application {
         return menuBar;
     }
 
-    private void drawCard(Label cardLabel, ImageView cardImage) {
+    /**
+     * Handles the logic of drawing from the deck.<br>
+     * Drawing handled by {@link Deck#drawCard()}.<br>
+     * Sets display labels according to the card and picks it's image for display.
+     *
+     * @param cardLabel   The {@link Label} that will say the name of the drawn card.
+     * @param cardDisplay The {@link ImageView} object that will display the drawn card.
+     * @return The drawn {@link Card}.
+     * @throws InvalidParameterException If the game's {@link Deck} object is {@code null}.
+     */
+    private Card drawCard(Label cardLabel, ImageView cardDisplay) throws InvalidParameterException {
+        Card card;
         if (deck == null) {
-            cardLabel.setText("The Deck has not been initialized yet.");
+            throw new InvalidParameterException("The Deck has not been initialized yet.");
         } else {
-            Card card = deck.drawCard();
+            card = deck.drawCard();
             cardLabel.setText("The drawn card is: " + card.toString());
-            cardImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/cards/" + filenameOfCard(card)))));
+            cardDisplay.setImage(fetchImageOfCard(card));
+            return card;
         }
+    }
+
+    /**
+     * Fetches the picture of a card and returns a new imageview that displays it.
+     *
+     * @param card The {@link Card} for which to fetch the corresponding image.
+     * @return New {@link ImageView} object, displaying the {@link Image} of {@code card}.
+     */
+    private ImageView createNewImageViewOfCard(Card card) {
+        return createNewImageViewOfCard(card, 150);
+    }
+
+    /**
+     * Fetches the picture of a card and returns a new imageview that displays it.
+     *
+     * @param card   The {@link Card} for which to fetch the corresponding image.
+     * @param height The preferred height of the image display.
+     * @return New {@link ImageView} object, displaying the {@link Image} of {@code card}.
+     */
+    private ImageView createNewImageViewOfCard(Card card, int height) {
+        ImageView imageView = new ImageView();
+        imageView.setFitHeight(height);
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        imageView.setCache(true);
+        imageView.setImage(fetchImageOfCard(card));
+        imageView.setDisable(false);
+
+        return imageView;
     }
 
     @Override
     public void start(Stage primaryStage) {
         //Prepping VBox
+        //Box at the center with buttons and drawn card image
         VBox vBoxCenter = new VBox(20);
         vBoxCenter.setAlignment(Pos.CENTER);
-
+        //Box at the bottom for counters (No. of drawn cards, No. of cards left in deck)
         VBox vBoxBottom = new VBox(5);
         vBoxBottom.setAlignment(Pos.TOP_LEFT);
 
         //Prepping HBox
+        //Buttons for starting game and drawing
         HBox hBoxButtons = new HBox(5);
         hBoxButtons.setAlignment(Pos.CENTER);
+        //Displays for the cards in Player's hand
+        HBox hBoxCardsInHand = new HBox(5);
+        hBoxCardsInHand.setAlignment(Pos.CENTER);
+        //TODO implement lambda Labels and fill up
+        //Labels for the cards in the player's hand
+        HBox hBoxCardsInHandLabels = new HBox(5);
+        hBoxCardsInHandLabels.setAlignment(Pos.CENTER);
 
         //Welcome text
         Text title = new Text(30, 80, "Ride the Bus: Welcome!");
         title.setFont(new Font(26));
 
         //ImageView for card display
-        ImageView cardImageView = new ImageView();
-        cardImageView.setFitHeight(150);
-        cardImageView.setPreserveRatio(true);
-        cardImageView.setImage(null);
-        cardImageView.setDisable(true);
+        //Last card drawn
+        ImageView cardDrawnImageView = new ImageView();
+        cardDrawnImageView.setFitHeight(150);
+        cardDrawnImageView.setPreserveRatio(true);
+        cardDrawnImageView.setSmooth(true);
+        cardDrawnImageView.setCache(true);
+        cardDrawnImageView.setImage(null);
+        cardDrawnImageView.setDisable(true);
 
         //Labels
         Label cardLabel = new Label("Press \"Start new Game\" to draw the first card!");
@@ -99,25 +175,27 @@ public class MainFX extends Application {
         //Setting up button for next card draw
         Button nextCardBtn = new Button("Next Card");
         nextCardBtn.setOnAction(e -> {
-            drawCard(cardLabel, cardImageView);
+            Card drawnCard = drawCard(cardLabel, cardDrawnImageView);
             remainingCardsLabel.setText("Remaining cards in the Deck: " + deck.getCardsLeftInDeck().size());
             numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
+            hBoxCardsInHand.getChildren().add(createNewImageViewOfCard(drawnCard, 100));
         });
         nextCardBtn.setDisable(true);
         nextCardBtn.setPrefWidth(120);
 
+        //TODO handle player's hand display when starting new game
         //Creating the start new game button
         Button startBtn = new Button("Start new Game");
         startBtn.setOnAction(e -> {
             deck = new Deck();
             deck.shuffle();
-            drawCard(cardLabel, cardImageView);
+            drawCard(cardLabel, cardDrawnImageView);
             remainingCardsLabel.setText("Remaining cards in the Deck: " + deck.getCardsLeftInDeck().size());
             numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
             startBtn.setDefaultButton(false);
             nextCardBtn.setDisable(false);
-            cardImageView.setDisable(false);
-            if (!vBoxCenter.getChildren().contains(cardImageView)) vBoxCenter.getChildren().add(2, cardImageView);
+            cardDrawnImageView.setDisable(false);
+            if (!vBoxCenter.getChildren().contains(cardDrawnImageView)) vBoxCenter.getChildren().add(2, cardDrawnImageView);
         });
         startBtn.setDefaultButton(true);
         startBtn.setPrefWidth(120);
@@ -126,7 +204,7 @@ public class MainFX extends Application {
         hBoxButtons.getChildren().addAll(startBtn, nextCardBtn);
 
         //Adding everything to the VBoxes
-        vBoxCenter.getChildren().addAll(title, hBoxButtons, cardLabel);
+        vBoxCenter.getChildren().addAll(title, hBoxButtons, cardLabel, hBoxCardsInHand);
         vBoxBottom.getChildren().addAll(numberOfDrawsLabel, remainingCardsLabel);
 
         // Setting up Menu Bar and root of the Scene
