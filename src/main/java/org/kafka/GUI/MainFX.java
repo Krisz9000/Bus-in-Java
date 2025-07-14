@@ -142,11 +142,11 @@ public class MainFX extends Application {
         HBox hBoxButtons = new HBox(5);
         hBoxButtons.setAlignment(Pos.CENTER);
         //Displays for the cards in Player's hand
-        HBox hBoxCardsInHand = new HBox(5);
+        HBox hBoxCardsInHand = new HBox(10);
         hBoxCardsInHand.setAlignment(Pos.CENTER);
         //TODO implement lambda Labels and fill up
         //Labels for the cards in the player's hand
-        HBox hBoxCardsInHandLabels = new HBox(5);
+        HBox hBoxCardsInHandLabels = new HBox(10);
         hBoxCardsInHandLabels.setAlignment(Pos.CENTER);
 
         //Welcome text
@@ -164,20 +164,23 @@ public class MainFX extends Application {
         cardDrawnImageView.setDisable(true);
 
         //Labels
-        Label cardLabel = new Label("Press \"Start new Game\" to draw the first card!");
-        cardLabel.setFont(new Font(16));
-        Label remainingCardsLabel = new Label("Remaining cards in the Deck: 0");
-        remainingCardsLabel.setMaxWidth(350);
-        remainingCardsLabel.setAlignment(Pos.BASELINE_LEFT);
-        Label numberOfDrawsLabel = new Label("Number of draws: " + numberOfDraws);
-        numberOfDrawsLabel.setAlignment(Pos.BASELINE_LEFT);
-
+        Label cardLabel = new LabelBuilder("Press \"Start new Game\" to draw the first card!").build();
+        Label remainingCardsLabel = new LabelBuilder("Remaining cards in the Deck: 0")
+                .alignment(Pos.BASELINE_LEFT)
+                .maxWidth(350)
+                .build();
+        Label numberOfDrawsLabel = new LabelBuilder("Number of draws: " + numberOfDraws)
+                .alignment(Pos.BASELINE_LEFT)
+                .build();
         //Setting up button for next card draw
         Button nextCardBtn = new Button("Next Card");
         nextCardBtn.setOnAction(e -> {
             Card drawnCard = drawCard(cardLabel, cardDrawnImageView);
             remainingCardsLabel.setText("Remaining cards in the Deck: " + deck.getCardsLeftInDeck().size());
             numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
+            hBoxCardsInHandLabels.getChildren().add(new LabelBuilder(drawnCard.toString())
+                    .fontSize(8)
+                    .build());
             hBoxCardsInHand.getChildren().add(createNewImageViewOfCard(drawnCard, 100));
         });
         nextCardBtn.setDisable(true);
@@ -204,7 +207,7 @@ public class MainFX extends Application {
         hBoxButtons.getChildren().addAll(startBtn, nextCardBtn);
 
         //Adding everything to the VBoxes
-        vBoxCenter.getChildren().addAll(title, hBoxButtons, cardLabel, hBoxCardsInHand);
+        vBoxCenter.getChildren().addAll(title, hBoxButtons, cardLabel, hBoxCardsInHand, hBoxCardsInHandLabels);
         vBoxBottom.getChildren().addAll(numberOfDrawsLabel, remainingCardsLabel);
 
         // Setting up Menu Bar and root of the Scene
