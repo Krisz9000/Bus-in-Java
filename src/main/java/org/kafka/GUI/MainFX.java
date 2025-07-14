@@ -1,6 +1,7 @@
 package org.kafka.GUI;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -24,6 +25,7 @@ public class MainFX extends Application {
     private final int DEBUG_CODE = 1;
     private Deck deck;
     private int numberOfDraws = 0;
+    private boolean firstRun = true;
     
     public static void main(String[] args) {
         launch(args);
@@ -42,7 +44,6 @@ public class MainFX extends Application {
         return card.toString().replace(' ', '_').replace("of", "OF").concat(".png");
     }
 
-
     /**
      * Fetches the image of a card by converting its attributes into a filename-path.
      *
@@ -60,7 +61,13 @@ public class MainFX extends Application {
      */
     private MenuBar setupMenuBar(Stage primaryStage) {
         MenuItem exitButton = new MenuItem("Exit Game");
-        exitButton.setOnAction(e -> System.exit(0));
+        exitButton.setOnAction(e -> Platform.exit());
+        MenuItem restartButton = new MenuItem("Restart Game");
+        restartButton.setOnAction(e -> {
+            this.firstRun = true;
+            this.numberOfDraws = 0;
+            this.start(primaryStage);
+        });
 
         MenuItem startConsoleGameBtn = new MenuItem("Start Game in Console");
         startConsoleGameBtn.setOnAction(e -> {
@@ -68,7 +75,7 @@ public class MainFX extends Application {
             GameLogic.startGame();
         });
 
-        Menu menuGame = new Menu("Game", null, startConsoleGameBtn, exitButton);
+        Menu menuGame = new Menu("Game", null, restartButton, startConsoleGameBtn, exitButton);
 
         MenuBar menuBar = new MenuBar(menuGame);
         menuBar.setUseSystemMenuBar(true);
@@ -158,22 +165,27 @@ public class MainFX extends Application {
 
         //Creating the start new game button
         Button startBtn = new Button("Start new Game");
+        //TODO implement first time screen, with this execution in mind
         startBtn.setOnAction(e -> {
             deck = new Deck();
             deck.shuffle();
-            //Clean up player's hand if this is a restart
-            hBoxCardsInHand.getChildren().clear();
-            hBoxCardsInHandLabels.getChildren().clear();
+            if (firstRun) {
+                this.firstRun = false;
 
-            startBtn.setDefaultButton(false);
-            cardDrawnImageView.setDisable(false);
-            //Inserts drawn card's imageView between the buttons and the label
-            if (!vBoxCenter.getChildren().contains(cardDrawnImageView)) vBoxCenter.getChildren().add(2, cardDrawnImageView);
-
+                startBtn.setDefaultButton(false);
+                nextCardBtn.setDefaultButton(true);
+                cardDrawnImageView.setDisable(false);
+                vBoxCenter.getChildren().add(2, cardDrawnImageView);
+            } else {
+                //Clean up player's hand because this is a restart
+                hBoxCardsInHand.getChildren().clear();
+                hBoxCardsInHandLabels.getChildren().clear();
+            }
             //Imitates clicking nextCardBtn, used basically as a method call
             nextCardBtn.setDisable(false);
             nextCardBtn.fire();
         });
+
         startBtn.setDefaultButton(true);
         startBtn.setPrefWidth(120);
 
@@ -191,10 +203,9 @@ public class MainFX extends Application {
         root.setBottom(vBoxBottom);
 
         //Setting up the Scene
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 800, 900);
         primaryStage.setTitle("Ride the Bus");
         primaryStage.setScene(scene);
         primaryStage.show();
-
     }
 }
