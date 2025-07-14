@@ -142,11 +142,10 @@ public class MainFX extends Application {
         HBox hBoxButtons = new HBox(5);
         hBoxButtons.setAlignment(Pos.CENTER);
         //Displays for the cards in Player's hand
-        HBox hBoxCardsInHand = new HBox(10);
+        HBox hBoxCardsInHand = new HBox(15);
         hBoxCardsInHand.setAlignment(Pos.CENTER);
-        //TODO implement lambda Labels and fill up
         //Labels for the cards in the player's hand
-        HBox hBoxCardsInHandLabels = new HBox(10);
+        HBox hBoxCardsInHandLabels = new HBox(15);
         hBoxCardsInHandLabels.setAlignment(Pos.CENTER);
 
         //Welcome text
@@ -168,9 +167,11 @@ public class MainFX extends Application {
         Label remainingCardsLabel = new LabelBuilder("Remaining cards in the Deck: 0")
                 .alignment(Pos.BASELINE_LEFT)
                 .maxWidth(350)
+                .fontSize(12)
                 .build();
         Label numberOfDrawsLabel = new LabelBuilder("Number of draws: " + numberOfDraws)
                 .alignment(Pos.BASELINE_LEFT)
+                .fontSize(12)
                 .build();
         //Setting up button for next card draw
         Button nextCardBtn = new Button("Next Card");
@@ -179,7 +180,7 @@ public class MainFX extends Application {
             remainingCardsLabel.setText("Remaining cards in the Deck: " + deck.getCardsLeftInDeck().size());
             numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
             hBoxCardsInHandLabels.getChildren().add(new LabelBuilder(drawnCard.toString())
-                    .fontSize(8)
+                    .fontSize(10)
                     .build());
             hBoxCardsInHand.getChildren().add(createNewImageViewOfCard(drawnCard, 100));
         });
@@ -192,13 +193,16 @@ public class MainFX extends Application {
         startBtn.setOnAction(e -> {
             deck = new Deck();
             deck.shuffle();
-            drawCard(cardLabel, cardDrawnImageView);
-            remainingCardsLabel.setText("Remaining cards in the Deck: " + deck.getCardsLeftInDeck().size());
-            numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
+            //Clean up player's hand if this is a restart
+            hBoxCardsInHand.getChildren().clear();
+            hBoxCardsInHandLabels.getChildren().clear();
+
             startBtn.setDefaultButton(false);
-            nextCardBtn.setDisable(false);
             cardDrawnImageView.setDisable(false);
             if (!vBoxCenter.getChildren().contains(cardDrawnImageView)) vBoxCenter.getChildren().add(2, cardDrawnImageView);
+
+            nextCardBtn.setDisable(false);
+            nextCardBtn.fire();
         });
         startBtn.setDefaultButton(true);
         startBtn.setPrefWidth(120);
