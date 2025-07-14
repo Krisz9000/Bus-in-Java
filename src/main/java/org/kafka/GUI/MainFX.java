@@ -98,35 +98,6 @@ public class MainFX extends Application {
         }
     }
 
-    /**
-     * Fetches the picture of a card and returns a new imageview that displays it.
-     *
-     * @param card The {@link Card} for which to fetch the corresponding image.
-     * @return New {@link ImageView} object, displaying the {@link Image} of {@code card}.
-     */
-    private ImageView createNewImageViewOfCard(Card card) {
-        return createNewImageViewOfCard(card, 150);
-    }
-
-    /**
-     * Fetches the picture of a card and returns a new imageview that displays it.
-     *
-     * @param card   The {@link Card} for which to fetch the corresponding image.
-     * @param height The preferred height of the image display.
-     * @return New {@link ImageView} object, displaying the {@link Image} of {@code card}.
-     */
-    private ImageView createNewImageViewOfCard(Card card, int height) {
-        ImageView imageView = new ImageView();
-        imageView.setFitHeight(height);
-        imageView.setPreserveRatio(true);
-        imageView.setSmooth(true);
-        imageView.setCache(true);
-        imageView.setImage(fetchImageOfCard(card));
-        imageView.setDisable(false);
-
-        return imageView;
-    }
-
     @Override
     public void start(Stage primaryStage) {
         //Prepping VBox
@@ -154,13 +125,8 @@ public class MainFX extends Application {
 
         //ImageView for card display
         //Last card drawn
-        ImageView cardDrawnImageView = new ImageView();
-        cardDrawnImageView.setFitHeight(150);
-        cardDrawnImageView.setPreserveRatio(true);
-        cardDrawnImageView.setSmooth(true);
-        cardDrawnImageView.setCache(true);
-        cardDrawnImageView.setImage(null);
-        cardDrawnImageView.setDisable(true);
+        ImageView cardDrawnImageView = new ImageViewBuilder(null)
+                .build();
 
         //Labels
         Label cardLabel = new LabelBuilder("Press \"Start new Game\" to draw the first card!").build();
@@ -182,12 +148,14 @@ public class MainFX extends Application {
             hBoxCardsInHandLabels.getChildren().add(new LabelBuilder(drawnCard.toString())
                     .fontSize(10)
                     .build());
-            hBoxCardsInHand.getChildren().add(createNewImageViewOfCard(drawnCard, 100));
+            hBoxCardsInHand.getChildren().add(new ImageViewBuilder(fetchImageOfCard(drawnCard))
+                    .fitHeight(100)
+                    .disable(false)
+                    .build());
         });
         nextCardBtn.setDisable(true);
         nextCardBtn.setPrefWidth(120);
 
-        //TODO handle player's hand display when starting new game
         //Creating the start new game button
         Button startBtn = new Button("Start new Game");
         startBtn.setOnAction(e -> {
@@ -199,8 +167,10 @@ public class MainFX extends Application {
 
             startBtn.setDefaultButton(false);
             cardDrawnImageView.setDisable(false);
+            //Inserts drawn card's imageView between the buttons and the label
             if (!vBoxCenter.getChildren().contains(cardDrawnImageView)) vBoxCenter.getChildren().add(2, cardDrawnImageView);
 
+            //Imitates clicking nextCardBtn, used basically as a method call
             nextCardBtn.setDisable(false);
             nextCardBtn.fire();
         });
