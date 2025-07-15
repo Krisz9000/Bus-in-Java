@@ -1,37 +1,48 @@
 package org.kafka.gameLogic;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Player {
-    private final int ID;
-    private ArrayList<Card> drawnCards = new ArrayList<>();
+    private final byte ID;
+    private final ArrayList<Card> drawnCards;
+    private byte numberOfDraws;
 
     public ArrayList<Card> getDrawnCards() {
         return drawnCards;
     }
 
-    public Player(int ID, ArrayList<Card> drawnCards) {
-        this.ID = ID;
-        this.drawnCards = drawnCards;
+    public Player(ArrayList<Player> players) {
+        byte id;
+        id = 0;
+        id += (byte) players.size();
+        this.ID = id;
+        this.numberOfDraws = 0;
+        this.drawnCards = new ArrayList<>();
     }
 
-    public Player(int ID) {
-        this.ID = ID;
+    public int getID() {
+        return ID;
+    }
+
+    public byte getNumberOfDraws() {
+        return this.numberOfDraws;
     }
 
     /**
-     * Draws a {@code Card} from a {@code Deck} and adds it to player`s hand.
+     * Draws a {@code Card} from a {@code Deck} and adds it to the player's hand.
      *
-     * @param deck The {@code Deck} the card should be drawn from.
+     * @param deck The {@link Deck} the card should be drawn from.
      */
     public void drawCard(Deck deck) {
         drawnCards.add(deck.drawCard());
+        numberOfDraws++;
     }
 
     /**
-     * Using a {@code StringBuilder}, build a single line string out of all the cards the player currently has drawn.
+     * Using a {@link StringBuilder}, build a single line string out of all the cards the player currently has drawn.
      *
-     * @return A concatenated {@code String} of all the player`s cards.
+     * @return A concatenated {@code String} of all the player's cards.
      */
     public String printDrawnCards() {
         StringBuilder sb = new StringBuilder();
@@ -42,14 +53,28 @@ public class Player {
         return sb.toString();
     }
 
-    public int getID() {
-        return ID;
-    }
-
     /**
-     * Empties the player's hand using {@code ArrayList<>.clear()}
+     * Empties the player's hand using {@link ArrayList<>#clear()}
      */
     public void clearHand() {
         this.drawnCards.clear();
+        this.numberOfDraws = 0;
+    }
+
+    @Override
+    public String toString() {
+        return "ID = " + this.ID + ", cards drawn: " + this.numberOfDraws + ", drawn cards are: " + printDrawnCards();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return ID == player.ID;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(ID);
     }
 }

@@ -9,7 +9,7 @@ import javafx.scene.image.ImageView;
  * @author Krisztián Kafka
  * @see javafx.scene.image.ImageView
  */
-public class ImageViewBuilder {
+final class ImageViewBuilder {
     private double fitHeight = 150;
     private double fitWidth = 0;
     private boolean preserveRatio = true;
