@@ -7,6 +7,8 @@ public class Player {
     private final byte ID;
     private final ArrayList<Card> drawnCards;
     private byte numberOfDraws;
+    byte question;
+    byte numberOfDrinks;
 
     public ArrayList<Card> getDrawnCards() {
         return drawnCards;
@@ -19,6 +21,7 @@ public class Player {
         this.ID = id;
         this.numberOfDraws = 0;
         this.drawnCards = new ArrayList<>();
+        this.question = 1;
     }
 
     public int getID() {
@@ -27,6 +30,14 @@ public class Player {
 
     public byte getNumberOfDraws() {
         return this.numberOfDraws;
+    }
+
+    public byte getQuestion() {
+        return this.question;
+    }
+
+    public byte getNumberOfDrinks() {
+        return this.numberOfDrinks;
     }
 
     /**

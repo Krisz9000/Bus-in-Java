@@ -12,7 +12,7 @@ public class GameLogic {
      * The main game logic. It sets up the Player, introduces the rules, and starts the questions.
      */
     public static boolean startGame() {
-        Player p1 = new Player(1);
+        Player p1 = new Player(players);
         System.out.println("""
                 ----------------Welcome to Ride The Bus!----------------
                 The rules are as follows:

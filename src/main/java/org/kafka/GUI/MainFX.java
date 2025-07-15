@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import org.kafka.gameLogic.Card;
 import org.kafka.gameLogic.Deck;
 import org.kafka.gameLogic.GameLogic;
+import org.kafka.gameLogic.GameLogicRework;
 
 import java.security.InvalidParameterException;
 import java.util.Objects;
@@ -23,9 +24,10 @@ import java.util.Objects;
 public class MainFX extends Application {
 
     private final int DEBUG_CODE = 1;
-    private Deck deck;
-    private int numberOfDraws = 0;
+    private final GameLogicRework gameLogic = new GameLogicRework();
     private boolean firstRun = true;
+    //TODO rewrite, will use Player.numberOfDraws
+    private int numberOfDraws = 0;
     
     public static void main(String[] args) {
         launch(args);
@@ -95,10 +97,10 @@ public class MainFX extends Application {
      */
     private Card drawCard(Label cardLabel, ImageView cardDisplay) throws InvalidParameterException {
         Card card;
-        if (deck == null) {
+        if (gameLogic.getDeck() == null) {
             throw new InvalidParameterException("The Deck has not been initialized yet.");
         } else {
-            card = deck.drawCard();
+            card = gameLogic.getDeck().drawCard();
             cardLabel.setText("The drawn card is: " + card.toString());
             cardDisplay.setImage(fetchImageOfCard(card));
             return card;
@@ -111,7 +113,7 @@ public class MainFX extends Application {
         //Box at the center with buttons and drawn card image
         VBox vBoxCenter = new VBox(20);
         vBoxCenter.setAlignment(Pos.CENTER);
-        //Box at the bottom for counters (No. of drawn cards, No. of cards left in deck)
+        //Box at the bottom for counters (No. of drawn cards, No. of cards left in deck, No. of drinks)
         VBox vBoxBottom = new VBox(5);
         vBoxBottom.setAlignment(Pos.TOP_LEFT);
 
@@ -146,11 +148,12 @@ public class MainFX extends Application {
                 .alignment(Pos.BASELINE_LEFT)
                 .fontSize(12)
                 .build();
+
         //Setting up button for next card draw
         Button nextCardBtn = new Button("Next Card");
         nextCardBtn.setOnAction(e -> {
             Card drawnCard = drawCard(cardLabel, cardDrawnImageView);
-            remainingCardsLabel.setText("Remaining cards in the Deck: " + deck.getCardsLeftInDeck().size());
+            remainingCardsLabel.setText("Remaining cards in the Deck: " + gameLogic.getDeck().getCardsLeftInDeck().size());
             numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
             hBoxCardsInHandLabels.getChildren().add(new LabelBuilder(drawnCard.toString())
                     .fontSize(10)
@@ -163,12 +166,13 @@ public class MainFX extends Application {
         nextCardBtn.setDisable(true);
         nextCardBtn.setPrefWidth(120);
 
+        //TODO rewrite start button
         //Creating the start new game button
         Button startBtn = new Button("Start new Game");
         //TODO implement first time screen, with this execution in mind
         startBtn.setOnAction(e -> {
-            deck = new Deck();
-            deck.shuffle();
+            //gameLogic.getDeck() = new Deck();
+            gameLogic.getDeck().shuffle();
             if (firstRun) {
                 this.firstRun = false;
 
@@ -185,9 +189,20 @@ public class MainFX extends Application {
             nextCardBtn.setDisable(false);
             nextCardBtn.fire();
         });
-
         startBtn.setDefaultButton(true);
         startBtn.setPrefWidth(120);
+
+        //Buttons to answer the questions, NOTE: meant to be interpreted, not taken literally!
+        //TODO add function call for iterating the question counter and continuing the game
+        //TODO add to a display box
+        Button yesBtn = new Button("1");
+        yesBtn.setOnAction(e -> {
+            gameLogic.answer(true);
+        });
+        Button noBtn = new Button("0");
+        noBtn.setOnAction(e -> {
+            gameLogic.answer(false);
+        });
 
         //Adding everything to the HBoxes
         hBoxButtons.getChildren().addAll(startBtn, nextCardBtn);
@@ -203,7 +218,7 @@ public class MainFX extends Application {
         root.setBottom(vBoxBottom);
 
         //Setting up the Scene
-        Scene scene = new Scene(root, 800, 900);
+        Scene scene = new Scene(root, 800, 700);
         primaryStage.setTitle("Ride the Bus");
         primaryStage.setScene(scene);
         primaryStage.show();
