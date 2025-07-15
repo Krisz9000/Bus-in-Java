@@ -13,10 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.kafka.gameLogic.Card;
-import org.kafka.gameLogic.Deck;
-import org.kafka.gameLogic.GameLogic;
-import org.kafka.gameLogic.GameLogicRework;
+import org.kafka.gameLogic.*;
 
 import java.security.InvalidParameterException;
 import java.util.Objects;
@@ -28,7 +25,10 @@ public class MainFX extends Application {
     private boolean firstRun = true;
     //TODO rewrite, will use Player.numberOfDraws
     private int numberOfDraws = 0;
-    
+    private final double WINDOW_HEIGHT = 700;
+    private final double WINDOW_WIDTH = 800;
+
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -169,7 +169,6 @@ public class MainFX extends Application {
         //TODO rewrite start button
         //Creating the start new game button
         Button startBtn = new Button("Start new Game");
-        //TODO implement first time screen, with this execution in mind
         startBtn.setOnAction(e -> {
             //gameLogic.getDeck() = new Deck();
             gameLogic.getDeck().shuffle();
@@ -218,9 +217,56 @@ public class MainFX extends Application {
         root.setBottom(vBoxBottom);
 
         //Setting up the Scene
-        Scene scene = new Scene(root, 800, 700);
+        Scene gameScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         primaryStage.setTitle("Ride the Bus");
-        primaryStage.setScene(scene);
+        primaryStage.setScene(createStartUpScene(primaryStage, gameScene));
         primaryStage.show();
     }
+
+    private Scene createStartUpScene(Stage primaryStage, Scene gameScene) {
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        VBox vBoxCenter = new VBox(30);
+        vBoxCenter.setAlignment(Pos.CENTER);
+        HBox hBoxInputs = new HBox(40);
+        hBoxInputs.setAlignment(Pos.CENTER);
+
+        VBox vBoxPlayerInput = new VBox(20);
+        vBoxPlayerInput.setAlignment(Pos.CENTER);
+        VBox vBoxDecksInput = new VBox(20);
+        vBoxDecksInput.setAlignment(Pos.CENTER);
+
+        Label welcomeLabel = new LabelBuilder(Texts.getWELCOME())
+                .maxWidth(500)
+                .build();
+        Label playersLabel = new LabelBuilder("Number Of Players").build();
+        Label decksLabel = new LabelBuilder("Decks of Cards").build();
+
+        TextField playersInput = new TextField("1");
+        TextField decksInput = new TextField("1");
+
+        //TODO implement pop-up
+        Button rulesBtn = new Button("Rules");
+        rulesBtn.setPrefWidth(150);
+        rulesBtn.setOnAction(e -> {
+        });
+
+        //TODO implement input checking logic
+        Button startGameBtn = new Button("Start the Game");
+        startGameBtn.setOnAction(e -> {
+            primaryStage.setScene(gameScene);
+        });
+        startGameBtn.setPrefWidth(150);
+
+        vBoxPlayerInput.getChildren().addAll(playersLabel, playersInput);
+        vBoxDecksInput.getChildren().addAll(decksLabel, decksInput);
+        hBoxInputs.getChildren().addAll(vBoxPlayerInput, vBoxDecksInput);
+        vBoxCenter.getChildren().addAll(welcomeLabel, rulesBtn, hBoxInputs, startGameBtn);
+
+        root.setTop(setupMenuBar(primaryStage));
+        root.setCenter(vBoxCenter);
+        return scene;
+    }
+
 }
