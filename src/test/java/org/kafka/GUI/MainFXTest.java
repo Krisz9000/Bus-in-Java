@@ -1,10 +1,10 @@
 package org.kafka.GUI;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class JavaFXAvailabilityTest {
+public class MainFXTest {
     @Test
     public void testJavaFXModulesAvailability() {
         try {

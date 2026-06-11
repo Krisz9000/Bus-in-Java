@@ -1,9 +1,8 @@
 package org.kafka.gameLogic;
 
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CardTest {
     @Test

@@ -1,14 +1,12 @@
 package org.kafka.gameLogic;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-
-import static org.junit.Assert.*;
 
 public class DeckTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -58,12 +56,12 @@ public class DeckTest {
         assertEquals(expectedCardsLeftInDeck.size(), deck.getCardsLeftInDeck().size());
     }
 
-    @Before
+    @BeforeEach
     public void setUpStreams() {
         System.setOut(new PrintStream(outContent));
     }
 
-    @After
+    @AfterEach
     public void restoreStreams() {
         System.setOut(originalOut);
     }
@@ -81,7 +79,7 @@ public class DeckTest {
         assertFalse(deck.getCardsLeftInDeck().isEmpty());
 
         deck.printDeck();
-        assertEquals("The two Strings didnt match!", "ACE of SPADES\r\nACE of SPADES\r\nKING of DIAMONDS\r\nKING of DIAMONDS\r\n", outContent.toString());
+        assertEquals("ACE of SPADES\r\nACE of SPADES\r\nKING of DIAMONDS\r\nKING of DIAMONDS\r\n",outContent.toString(),"The two Strings didnt match!");
 
     }
 }
