@@ -17,8 +17,6 @@ import java.util.Map;
  */
 final class LabelBuilder {
 
-    //TODO cleanup unused code
-
     //Hashmap for looking up past builders based on their finished labels. Used for updating labels
     private static final Map<Label, LabelBuilder> builtLabels= new HashMap<>();
 
@@ -57,7 +55,7 @@ final class LabelBuilder {
                 sb.append(o.toString());
             }
             this.displayText = baseText + sb.toString().stripTrailing();
-        }
+        } else this.displayText = baseText;
         return this;
     }
 

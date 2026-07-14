@@ -2,7 +2,6 @@ package org.kafka.gameLogic;
 
 public final class Texts {
     //TODO Write texts
-    //TODO Add Welcome to start-up Scene
     private static final String WELCOME = """
                 ----------------Welcome to Ride The Bus!----------------
                 This game is intended for at least 3-4 players.
@@ -54,7 +53,6 @@ public final class Texts {
         return WELCOME;
     }
 
-    //TODO add da rules to the pop-up window made for it
     public static String getRULES() {return RULES;}
 
     public static String getQUESTION1() {

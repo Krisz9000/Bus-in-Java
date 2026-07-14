@@ -27,6 +27,12 @@ public class MainFX extends Application {
     private int numberOfDraws = 0;
     private final double WINDOW_HEIGHT = 700;
     private final double WINDOW_WIDTH = 800;
+    private final BorderPane POPUP_ROOT = new BorderPane();
+    private final Scene POPUP_SCENE = new Scene(POPUP_ROOT, WINDOW_WIDTH - 200, WINDOW_HEIGHT - 200);
+    private final Stage POPUP_STAGE = new Stage();
+    private final HBox HBOX_POPUP = new HBox(15);
+    private final VBox VBOX_POPUP = new VBox(20);
+    private final Button CLOSE_BTN = new Button("Close");
 
     //TODO JavaFX Tutorial for myself:
     /*
@@ -122,9 +128,7 @@ public class MainFX extends Application {
         VBox vBoxGameBottom = new VBox(5);
         vBoxGameBottom.setAlignment(Pos.TOP_LEFT);
             //Prepping PopUps
-        //TODO not part of a popUp yet
-        VBox vBoxPopUp = new VBox(20);
-        vBoxPopUp.setAlignment(Pos.CENTER);
+        VBOX_POPUP.setAlignment(Pos.CENTER);
         //TODO not part of a popUp yet
         //Box for picking players
         VBox vBoxPlayers = new VBox(20);
@@ -141,18 +145,10 @@ public class MainFX extends Application {
         HBox hBoxCardsInHandLabels = new HBox(15);
         hBoxCardsInHandLabels.setAlignment(Pos.CENTER);
             //Prepping PopUps
-        //TODO not part of a popUp yet
-        HBox hBoxPopUp = new HBox(15);
-        hBoxPopUp.setAlignment(Pos.CENTER);
-        //TODO Finish PopUps
-            //Prepping PopUps
-        BorderPane popUpRoot = new BorderPane();
-        Scene popUpScene = new Scene(popUpRoot, 400, 600);
-        Stage popUpStage = new Stage();
+        HBOX_POPUP.setAlignment(Pos.CENTER);
 
-        popUpRoot.setCenter(vBoxPopUp);
-        popUpStage.setScene(popUpScene);
-
+        POPUP_ROOT.setCenter(VBOX_POPUP);
+        POPUP_STAGE.setScene(POPUP_SCENE);
 
         //Welcome text
         Text title = new Text(30, 80, "Ride the Bus: Welcome!");
@@ -189,14 +185,13 @@ public class MainFX extends Application {
                 .fontSize(16)
                 .updateText()
                 .build();
-        Label labelDaRules = new LabelBuilder(Texts.getRULES())
-                .updateText()
-                .build();
 
+        //TODO fix not updating labels
         //Setting up button for next card draw
         Button nextCardBtn = new Button("Next Card");
         nextCardBtn.setOnAction(e -> {
             Card drawnCard = drawCard(cardLabel, cardDrawnImageView);
+            //TODO need to take a look at how this should update
             LabelBuilder.updateLabel(remainingCardsLabel, gameLogic.getDeck().getCardsLeftInDeck().size());
             LabelBuilder.updateLabel(numberOfDrawsLabel, ++numberOfDraws);
             hBoxCardsInHandLabels.getChildren().add(new LabelBuilder(drawnCard.toString())
@@ -243,37 +238,27 @@ public class MainFX extends Application {
         Button yesBtn = new Button("1");
         yesBtn.setOnAction(e -> {
             gameLogic.answer(true);
-            popUpStage.hide();
+            POPUP_STAGE.hide();
         });
         Button noBtn = new Button("0");
         noBtn.setOnAction(e -> {
             gameLogic.answer(false);
-            popUpStage.hide();
+            POPUP_STAGE.hide();
         });
 
         //Button to close a PopUp window
-        Button closeBtn = new Button("Close");
-        closeBtn.setOnAction(e -> {
-            vBoxPopUp.getChildren().clear();
-            hBoxPopUp.getChildren().clear();
-            popUpStage.hide();
-        });
-
-        //Button to give an overview about the rules of the game
-        Button daRulesBtn = new Button("Da Rules");
-        daRulesBtn.setOnAction(e -> {
-            vBoxPopUp.getChildren().addAll(labelDaRules, closeBtn);
-            popUpStage.show();
+        CLOSE_BTN.setOnAction(e -> {
+            VBOX_POPUP.getChildren().clear();
+            HBOX_POPUP.getChildren().clear();
+            POPUP_STAGE.hide();
         });
 
         //Adding everything to the HBoxes
         hBoxGameButtons.getChildren().addAll(startBtn, nextCardBtn);
-        hBoxPopUp.getChildren().addAll(yesBtn, noBtn);
 
         //Adding everything to the VBoxes
         vBoxGameCenter.getChildren().addAll(title, hBoxGameButtons, cardLabel, hBoxCardsInHand, hBoxCardsInHandLabels);
         vBoxGameBottom.getChildren().addAll(numberOfDrawsLabel, remainingCardsLabel, labelNumberOfDrinks);
-        vBoxPopUp.getChildren().addAll(labelQuestion, hBoxPopUp);
 
         // Setting up Menu Bar and root of the Scene
         BorderPane root = new BorderPane();
@@ -305,14 +290,19 @@ public class MainFX extends Application {
         Label welcomeLabel = new LabelBuilder(Texts.getWELCOME())
                 .updateText()
                 .build();
-        Label playersLabel = new LabelBuilder("Number Of Players").build();
-        Label decksLabel = new LabelBuilder("Decks of Cards").build();
+        Label playersLabel = new LabelBuilder("Number Of Players").updateText().build();
+        Label decksLabel = new LabelBuilder("Decks of Cards").updateText().build();
+        Label labelDaRules = new LabelBuilder(Texts.getRULES()).updateText().build();
 
         TextField playersInput = new TextField("1");
         TextField decksInput = new TextField("1");
 
-        //TODO implement pop-up
-        Button rulesBtn = getRulesBtn();
+        //Button to give an overview about the rules of the game
+        Button daRulesBtn = new Button("Da Rules");
+        daRulesBtn.setOnAction(e -> {
+            VBOX_POPUP.getChildren().addAll(labelDaRules, CLOSE_BTN);
+            POPUP_STAGE.show();
+        });
 
         //TODO implement input checking logic
         Button startGameBtn = new Button("Start the Game");
@@ -324,16 +314,10 @@ public class MainFX extends Application {
         vBoxPlayerInput.getChildren().addAll(playersLabel, playersInput);
         vBoxDecksInput.getChildren().addAll(decksLabel, decksInput);
         hBoxInputs.getChildren().addAll(vBoxPlayerInput, vBoxDecksInput);
-        vBoxCenter.getChildren().addAll(welcomeLabel, rulesBtn, hBoxInputs, startGameBtn);
+        vBoxCenter.getChildren().addAll(welcomeLabel, daRulesBtn, hBoxInputs, startGameBtn);
 
         root.setTop(setupMenuBar(primaryStage));
         root.setCenter(vBoxCenter);
         return scene;
     }
-
-    //TODO ...
-    private static Button getRulesBtn() {
-        return null;
-    }
-
 }
