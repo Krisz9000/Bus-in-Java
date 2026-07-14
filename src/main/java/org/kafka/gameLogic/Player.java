@@ -8,7 +8,7 @@ public class Player {
     private final ArrayList<Card> drawnCards;
     private byte numberOfDraws;
     byte question;
-    byte numberOfDrinks;
+    private byte numberOfDrinks;
 
     public ArrayList<Card> getDrawnCards() {
         return drawnCards;
@@ -19,9 +19,10 @@ public class Player {
         id = 0;
         id += (byte) players.size();
         this.ID = id;
-        this.numberOfDraws = 0;
         this.drawnCards = new ArrayList<>();
+        this.numberOfDraws = 0;
         this.question = 1;
+        this.numberOfDrinks = 0;
     }
 
     public int getID() {
@@ -69,12 +70,13 @@ public class Player {
      */
     public void clearHand() {
         this.drawnCards.clear();
+        //TODO check back if this is necessary
         this.numberOfDraws = 0;
     }
 
     @Override
     public String toString() {
-        return "ID = " + this.ID + ", cards drawn: " + this.numberOfDraws + ", drawn cards are: " + printDrawnCards();
+        return "ID = " + this.ID + ", No. of cards drawn: " + this.numberOfDraws + ",  which are: " + printDrawnCards();
     }
 
     @Override

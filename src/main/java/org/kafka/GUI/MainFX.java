@@ -28,6 +28,11 @@ public class MainFX extends Application {
     private final double WINDOW_HEIGHT = 700;
     private final double WINDOW_WIDTH = 800;
 
+    //TODO JavaFX Tutorial for myself:
+    /*
+    BorderPane can have V and H boxes for elements, those boxes can house the labels/buttons/Images whatevs.
+    I need a BorderPane as the root for a Scene, the Scene can be displayed as a (primary)Stage.
+     */
 
     public static void main(String[] args) {
         launch(args);
@@ -109,24 +114,45 @@ public class MainFX extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        //Prepping VBox
+            //Prepping VBox
         //Box at the center with buttons and drawn card image
-        VBox vBoxCenter = new VBox(20);
-        vBoxCenter.setAlignment(Pos.CENTER);
+        VBox vBoxGameCenter = new VBox(20);
+        vBoxGameCenter.setAlignment(Pos.CENTER);
         //Box at the bottom for counters (No. of drawn cards, No. of cards left in deck, No. of drinks)
-        VBox vBoxBottom = new VBox(5);
-        vBoxBottom.setAlignment(Pos.TOP_LEFT);
+        VBox vBoxGameBottom = new VBox(5);
+        vBoxGameBottom.setAlignment(Pos.TOP_LEFT);
+            //Prepping PopUps
+        //TODO not part of a popUp yet
+        VBox vBoxPopUp = new VBox(20);
+        vBoxPopUp.setAlignment(Pos.CENTER);
+        //TODO not part of a popUp yet
+        //Box for picking players
+        VBox vBoxPlayers = new VBox(20);
+        vBoxPlayers.setAlignment(Pos.CENTER);
 
-        //Prepping HBox
+            //Prepping HBox
         //Buttons for starting game and drawing
-        HBox hBoxButtons = new HBox(5);
-        hBoxButtons.setAlignment(Pos.CENTER);
+        HBox hBoxGameButtons = new HBox(5);
+        hBoxGameButtons.setAlignment(Pos.CENTER);
         //Displays for the cards in Player's hand
         HBox hBoxCardsInHand = new HBox(15);
         hBoxCardsInHand.setAlignment(Pos.CENTER);
         //Labels for the cards in the player's hand
         HBox hBoxCardsInHandLabels = new HBox(15);
         hBoxCardsInHandLabels.setAlignment(Pos.CENTER);
+            //Prepping PopUps
+        //TODO not part of a popUp yet
+        HBox hBoxPopUp = new HBox(15);
+        hBoxPopUp.setAlignment(Pos.CENTER);
+        //TODO Finish PopUps
+            //Prepping PopUps
+        BorderPane popUpRoot = new BorderPane();
+        Scene popUpScene = new Scene(popUpRoot, 400, 600);
+        Stage popUpStage = new Stage();
+
+        popUpRoot.setCenter(vBoxPopUp);
+        popUpStage.setScene(popUpScene);
+
 
         //Welcome text
         Text title = new Text(30, 80, "Ride the Bus: Welcome!");
@@ -134,29 +160,48 @@ public class MainFX extends Application {
 
         //ImageView for card display
         //Last card drawn
-        ImageView cardDrawnImageView = new ImageViewBuilder(null)
-                .build();
+        ImageView cardDrawnImageView = new ImageViewBuilder(null).build();
 
         //Labels
         Label cardLabel = new LabelBuilder("Press \"Start new Game\" to draw the first card!").build();
-        Label remainingCardsLabel = new LabelBuilder("Remaining cards in the Deck: 0")
+        Label remainingCardsLabel = new LabelBuilder("Remaining cards in the Deck:")
                 .alignment(Pos.BASELINE_LEFT)
                 .maxWidth(350)
                 .fontSize(12)
+                .addExtraArgs(0)
+                .updateText()
                 .build();
-        Label numberOfDrawsLabel = new LabelBuilder("Number of draws: " + numberOfDraws)
+        Label numberOfDrawsLabel = new LabelBuilder("Number of draws:")
                 .alignment(Pos.BASELINE_LEFT)
                 .fontSize(12)
+                .addExtraArgs(numberOfDraws)
+                .updateText()
+                .build();
+        Label labelNumberOfDrinks = new LabelBuilder("Your Number of Drinks:")
+                .alignment(Pos.BASELINE_LEFT)
+                .fontSize(12)
+                //.addExtraArgs(player.getNumberOfDrinks())
+                .addExtraArgs(0)
+                .updateText()
+                .build();
+        Label labelQuestion = new LabelBuilder("Here is your next question: \n")
+                .alignment(Pos.BASELINE_CENTER)
+                .fontSize(16)
+                .updateText()
+                .build();
+        Label labelDaRules = new LabelBuilder(Texts.getRULES())
+                .updateText()
                 .build();
 
         //Setting up button for next card draw
         Button nextCardBtn = new Button("Next Card");
         nextCardBtn.setOnAction(e -> {
             Card drawnCard = drawCard(cardLabel, cardDrawnImageView);
-            remainingCardsLabel.setText("Remaining cards in the Deck: " + gameLogic.getDeck().getCardsLeftInDeck().size());
-            numberOfDrawsLabel.setText("Number of draws: " + ++numberOfDraws);
+            LabelBuilder.updateLabel(remainingCardsLabel, gameLogic.getDeck().getCardsLeftInDeck().size());
+            LabelBuilder.updateLabel(numberOfDrawsLabel, ++numberOfDraws);
             hBoxCardsInHandLabels.getChildren().add(new LabelBuilder(drawnCard.toString())
                     .fontSize(10)
+                    .updateText()
                     .build());
             hBoxCardsInHand.getChildren().add(new ImageViewBuilder(fetchImageOfCard(drawnCard))
                     .fitHeight(100)
@@ -166,7 +211,7 @@ public class MainFX extends Application {
         nextCardBtn.setDisable(true);
         nextCardBtn.setPrefWidth(120);
 
-        //TODO rewrite start button
+        //TODO rewrite start button, needs to account for different amount of players.
         //Creating the start new game button
         Button startBtn = new Button("Start new Game");
         startBtn.setOnAction(e -> {
@@ -178,7 +223,7 @@ public class MainFX extends Application {
                 startBtn.setDefaultButton(false);
                 nextCardBtn.setDefaultButton(true);
                 cardDrawnImageView.setDisable(false);
-                vBoxCenter.getChildren().add(2, cardDrawnImageView);
+                vBoxGameCenter.getChildren().add(2, cardDrawnImageView);
             } else {
                 //Clean up player's hand because this is a restart
                 hBoxCardsInHand.getChildren().clear();
@@ -194,27 +239,47 @@ public class MainFX extends Application {
         //Buttons to answer the questions, NOTE: meant to be interpreted, not taken literally!
         //TODO add function call for iterating the question counter and continuing the game
         //TODO add to a display box
+        //TODO Clear up PopUp window after pressing button
         Button yesBtn = new Button("1");
         yesBtn.setOnAction(e -> {
             gameLogic.answer(true);
+            popUpStage.hide();
         });
         Button noBtn = new Button("0");
         noBtn.setOnAction(e -> {
             gameLogic.answer(false);
+            popUpStage.hide();
+        });
+
+        //Button to close a PopUp window
+        Button closeBtn = new Button("Close");
+        closeBtn.setOnAction(e -> {
+            vBoxPopUp.getChildren().clear();
+            hBoxPopUp.getChildren().clear();
+            popUpStage.hide();
+        });
+
+        //Button to give an overview about the rules of the game
+        Button daRulesBtn = new Button("Da Rules");
+        daRulesBtn.setOnAction(e -> {
+            vBoxPopUp.getChildren().addAll(labelDaRules, closeBtn);
+            popUpStage.show();
         });
 
         //Adding everything to the HBoxes
-        hBoxButtons.getChildren().addAll(startBtn, nextCardBtn);
+        hBoxGameButtons.getChildren().addAll(startBtn, nextCardBtn);
+        hBoxPopUp.getChildren().addAll(yesBtn, noBtn);
 
         //Adding everything to the VBoxes
-        vBoxCenter.getChildren().addAll(title, hBoxButtons, cardLabel, hBoxCardsInHand, hBoxCardsInHandLabels);
-        vBoxBottom.getChildren().addAll(numberOfDrawsLabel, remainingCardsLabel);
+        vBoxGameCenter.getChildren().addAll(title, hBoxGameButtons, cardLabel, hBoxCardsInHand, hBoxCardsInHandLabels);
+        vBoxGameBottom.getChildren().addAll(numberOfDrawsLabel, remainingCardsLabel, labelNumberOfDrinks);
+        vBoxPopUp.getChildren().addAll(labelQuestion, hBoxPopUp);
 
         // Setting up Menu Bar and root of the Scene
         BorderPane root = new BorderPane();
         root.setTop(setupMenuBar(primaryStage));
-        root.setCenter(vBoxCenter);
-        root.setBottom(vBoxBottom);
+        root.setCenter(vBoxGameCenter);
+        root.setBottom(vBoxGameBottom);
 
         //Setting up the Scene
         Scene gameScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -238,7 +303,7 @@ public class MainFX extends Application {
         vBoxDecksInput.setAlignment(Pos.CENTER);
 
         Label welcomeLabel = new LabelBuilder(Texts.getWELCOME())
-                .maxWidth(500)
+                .updateText()
                 .build();
         Label playersLabel = new LabelBuilder("Number Of Players").build();
         Label decksLabel = new LabelBuilder("Decks of Cards").build();
@@ -247,10 +312,7 @@ public class MainFX extends Application {
         TextField decksInput = new TextField("1");
 
         //TODO implement pop-up
-        Button rulesBtn = new Button("Rules");
-        rulesBtn.setPrefWidth(150);
-        rulesBtn.setOnAction(e -> {
-        });
+        Button rulesBtn = getRulesBtn();
 
         //TODO implement input checking logic
         Button startGameBtn = new Button("Start the Game");
@@ -267,6 +329,11 @@ public class MainFX extends Application {
         root.setTop(setupMenuBar(primaryStage));
         root.setCenter(vBoxCenter);
         return scene;
+    }
+
+    //TODO ...
+    private static Button getRulesBtn() {
+        return null;
     }
 
 }

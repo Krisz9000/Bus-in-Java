@@ -161,8 +161,10 @@ public class GameLogicRework {
                 Example:
                 You have two Hearts and a Clubs and you draw a Diamonds
                 which you dont have, so the answer is "no"
+                
                 So, do you have one of this suit already?
                 Acceptable answers are: y, yes, n, no
+                
                 Your current cards are:""" + "\n" + p.printDrawnCards());
         String fourthGuess = readString();
         if (!fourthGuess.equalsIgnoreCase("y") && !fourthGuess.equalsIgnoreCase("yes") && !fourthGuess.equalsIgnoreCase("n") && !fourthGuess.equalsIgnoreCase("no")) {
